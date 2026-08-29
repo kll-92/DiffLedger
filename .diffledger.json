@@ -1,0 +1,24 @@
+{
+  "$schema": "./schemas/policy.schema.json",
+  "schemaVersion": 1,
+  "maxRiskScore": 70,
+  "maxOutputBytes": 16384,
+  "checks": [
+    {
+      "id": "typecheck",
+      "command": "npm",
+      "args": ["run", "typecheck"],
+      "when": ["source", "test", "configuration", "dependency"],
+      "required": true,
+      "timeoutMs": 120000
+    },
+    {
+      "id": "tests",
+      "command": "npm",
+      "args": ["test"],
+      "when": ["source", "test"],
+      "required": true,
+      "timeoutMs": 300000
+    }
+  ]
+}

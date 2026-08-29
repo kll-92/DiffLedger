@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://diffledger.dev/schemas/policy-v1.json",
+  "title": "DiffLedger Policy",
+  "type": "object",
+  "required": ["schemaVersion", "maxRiskScore", "maxOutputBytes", "checks"],
+  "properties": {
+    "$schema": { "type": "string" },
+    "schemaVersion": { "const": 1 },
+    "maxRiskScore": { "type": "integer", "minimum": 0, "maximum": 100 },
+    "maxOutputBytes": { "type": "integer", "minimum": 256, "maximum": 1000000 },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "command", "args", "when", "required", "timeoutMs"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-z][a-z0-9-]{0,63}$" },
+          "command": { "type": "string", "minLength": 1 },
+          "args": { "type": "array", "items": { "type": "string" } },
+          "when": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "enum": ["always", "source", "test", "documentation", "dependency", "migration", "workflow", "security", "configuration"]
+            }
+          },
+          "required": { "type": "boolean" },
+          "timeoutMs": { "type": "integer", "minimum": 100, "maximum": 3600000 }
+        }
+      }
+    }
+  }
+}
