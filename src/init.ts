@@ -29,4 +29,3 @@ export function initializePolicy(cwd: string, force: boolean): string {
   writeFileSync(output, `${JSON.stringify(policy, null, 2)}\n`);
   return output;
 }
-

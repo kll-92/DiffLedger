@@ -23,4 +23,3 @@ serialization.
 5. Run `npm run check` and include the resulting DiffLedger Verdict.
 
 Please keep unrelated changes in separate pull requests.
-

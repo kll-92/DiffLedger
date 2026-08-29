@@ -48,4 +48,3 @@ Receipt Digest 只证明内容自生成后没有改变，不证明执行者身�
 [PRD](./docs/PRD.md) 与[市场调研](./docs/research/market-research.md)。
 
 详细配置、架构、安全模型和路线图请阅读[英文 README](./README.md)。
-

@@ -136,4 +136,3 @@ export function inspectChangeSet(cwd: string, baseRef: string, headRef?: string)
     }
   };
 }
-

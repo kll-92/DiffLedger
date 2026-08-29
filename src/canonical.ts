@@ -17,4 +17,3 @@ export function canonicalJson(value: unknown): string {
 export function sha256(value: unknown): string {
   return createHash("sha256").update(canonicalJson(value)).digest("hex");
 }
-

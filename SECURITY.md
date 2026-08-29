@@ -24,4 +24,3 @@ pre-1.0.
 Please use GitHub private vulnerability reporting rather than a public Issue.
 Include a minimal reproduction, affected version, and expected impact. Do not
 include production secrets or personal data.
-

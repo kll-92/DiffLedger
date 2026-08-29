@@ -29,4 +29,3 @@ export function renderMarkdown(receipt: Receipt): string {
     `## Evidence Results\n\n| Check | Required | Status | Duration |\n| --- | --- | --- | ---: |\n${evidence}\n\n` +
     `## Verdict Reasons\n\n${receipt.verdict.reasons.length ? receipt.verdict.reasons.map((reason) => `- ${reason}`).join("\n") : "- Policy satisfied."}\n`;
 }
-

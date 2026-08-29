@@ -56,4 +56,3 @@ export function loadPolicy(filePath: string): Policy {
   }
   return parsePolicy(parsed);
 }
-

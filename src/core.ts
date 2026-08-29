@@ -62,4 +62,3 @@ export function verifyReceiptFile(filePath: string): ReturnType<typeof verifyRec
   }
   return verifyReceiptObject(input);
 }
-

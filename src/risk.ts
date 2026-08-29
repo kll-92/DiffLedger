@@ -35,4 +35,3 @@ export function assessRisk(changeSet: ChangeSet): RiskAssessment {
   const level = score >= 75 ? "critical" : score >= 50 ? "high" : score >= 25 ? "medium" : "low";
   return { score, level, signals };
 }
-

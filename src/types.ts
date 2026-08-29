@@ -97,4 +97,3 @@ export interface Receipt extends ReceiptBody {
     digest: string;
   };
 }
-

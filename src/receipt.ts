@@ -23,4 +23,3 @@ export function verifyReceipt(receipt: unknown): { valid: boolean; expected?: st
   const actual = sha256(body);
   return { valid: actual === digest, expected: digest, actual };
 }
-

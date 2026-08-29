@@ -194,4 +194,3 @@ Contributions are welcome. Start with [CONTRIBUTING.md](./CONTRIBUTING.md).
 ## License
 
 MIT
-
