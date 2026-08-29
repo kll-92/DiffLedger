@@ -10,9 +10,11 @@ The v0.1 runner does not provide filesystem, process, network, or secret
 isolation. It avoids a command shell, enforces timeouts, and bounds captured
 output, but those controls do not make untrusted commands safe.
 
-A Receipt Digest detects accidental or deliberate changes to Receipt content.
-It does not authenticate who ran DiffLedger or whether the execution environment
-was trustworthy.
+A Receipt Digest detects corruption or edits where the digest was not also
+recomputed. Anyone who can replace the Receipt can recompute its unkeyed digest.
+Use `verify --digest <value>` with a value obtained from an independent trusted
+channel to detect that substitution. Neither mode authenticates who ran
+DiffLedger or whether the execution environment was trustworthy.
 
 ## Supported versions
 

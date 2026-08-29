@@ -12,7 +12,7 @@ DiffLedger 提供一个零云依赖 CLI。它比较 Git 基准与目标，识别
 
 ## User Stories
 
-1. As a developer, I want to initialize DiffLedger with one command, so that I can adopt it without studying a large configuration language.
+1. As a developer, I want to initialize DiffLedger with one command, so that I can adopt it without studying a large Policy language.
 2. As a developer, I want to compare my working tree with a Git base ref, so that uncommitted Agent changes can be checked before commit.
 3. As a maintainer, I want to compare two committed revisions, so that the same tool works in CI.
 4. As a reviewer, I want to see changed, added, deleted and renamed files, so that the analyzed scope is explicit.
@@ -30,14 +30,14 @@ DiffLedger 提供一个零云依赖 CLI。它比较 Git 基准与目标，识别
 16. As a developer, I want per-check timeouts, so that a hung tool cannot stall the gate indefinitely.
 17. As a reviewer, I want an Evidence Result to record exit status and duration, so that a claimed success has observable support.
 18. As a reviewer, I want bounded stdout and stderr in the Receipt, so that useful failure context is preserved without creating unbounded artifacts.
-19. As a maintainer, I want missing required evidence to fail the Verdict, so that configuration mistakes cannot silently pass.
+19. As a maintainer, I want missing required evidence to fail the Verdict, so that Policy mistakes cannot silently pass.
 20. As a maintainer, I want failed or timed-out required evidence to fail the Verdict, so that CI can block unsafe merges.
 21. As a developer, I want a successful check to exit zero and a failed gate to exit non-zero, so that any CI system can consume it.
 22. As a reviewer, I want a versioned JSON Receipt, so that tools can consume it without parsing terminal text.
 23. As a reviewer, I want a human-readable Markdown rendering, so that results can be posted to a pull request summary.
 24. As a reviewer, I want the Receipt to bind base revision, target revision/worktree digest and Policy digest, so that I know what was evaluated.
-25. As a reviewer, I want an offline verify command, so that edits to the Receipt are detected without rerunning repository code.
-26. As a security-conscious user, I want the tool to state that configured commands execute with my permissions, so that the trust model is not hidden.
+25. As a reviewer, I want an offline verify command with optional comparison to an independently trusted digest, so that corruption or Receipt substitution is detected without rerunning repository code.
+26. As a security-conscious user, I want the tool to state that Policy commands execute with my permissions, so that the trust model is not hidden.
 27. As an open-source contributor, I want no API key or account requirement, so that I can try the complete core product locally.
 28. As a project owner, I want example Policy and CI files, so that adoption takes minutes rather than hours.
 29. As a future integrator, I want stable schema and machine-readable reason codes, so that a GitHub App or Agent can consume results later.
@@ -55,7 +55,7 @@ DiffLedger 提供一个零云依赖 CLI。它比较 Git 基准与目标，识别
 - Risk scoring is additive, capped at 100, and composed from stable Risk Signal codes. A risk threshold can block a change even when commands pass.
 - Required Evidence Checks selected by the Change Set must all pass. Spawn failure, non-zero exit or timeout produces a failing Evidence Result.
 - Receipt JSON uses a schema version and stable ordering. The Receipt Digest is SHA-256 over canonical JSON excluding the digest field itself.
-- Receipt integrity proves only that content has not changed since the digest was produced; it does not prove signer identity or trustworthy execution. Documentation must state this distinction.
+- Receipt integrity detects content changes that do not also replace the unkeyed digest. Comparing with an independently trusted digest additionally detects substitution; neither mode proves signer identity or trustworthy execution. Documentation must state this distinction.
 - Console, JSON and Markdown are renderings of the same Receipt, not separate sources of truth.
 - CI examples use least-privilege read-only permissions and upload the generated Receipt as an artifact. Marketplace packaging is deferred until the CLI interface stabilizes.
 - The package is structured around one deep orchestration module that accepts repository, clock and process adapters internally. Callers learn one `check` interface; tests can substitute adapters only where real Git/process execution is impractical.
@@ -65,7 +65,7 @@ DiffLedger 提供一个零云依赖 CLI。它比较 Git 基准与目标，识别
 - Tests assert external behavior and stable domain outcomes, not internal call order.
 - The highest test seam is the compiled CLI running against temporary real Git repositories.
 - The first tracer test initializes a repository, changes a source file without tests, runs `check`, and observes a failing Verdict and valid Receipt.
-- Integration tests cover a passing source change with selected evidence, failing evidence, timeout, documentation-only changes, and Receipt tampering.
+- Integration tests cover a passing source change with selected evidence, failing evidence, timeout, documentation-only changes, internal digest mismatch, and substitution against an independently trusted digest.
 - Focused domain tests cover path classification, risk caps and canonical digest stability where integration failures would otherwise be hard to diagnose.
 - No network calls are permitted in the test suite.
 - The full suite runs on Linux, macOS and Windows-compatible Node APIs; Git-specific tests may normalize path separators and line endings.
@@ -85,7 +85,6 @@ DiffLedger 提供一个零云依赖 CLI。它比较 Git 基准与目标，识别
 ## Further Notes
 
 - The MVP optimizes for a three-minute first success and an auditable trust model.
-- `init` may suggest common commands by inspecting package metadata, but generated configuration must remain explicit and editable.
-- Future milestones include base-branch Policy loading, Docker isolation, in-toto output, GitHub Checks, SARIF ingestion, Agent session linkage and a local Web report.
+- `init` may suggest common commands by inspecting package metadata, but the generated Policy must remain explicit and editable.
+- Future milestones include base-branch Policy loading, Docker isolation, in-toto output, GitHub Checks, SARIF ingestion, Agent session linkage and a local Receipt explorer.
 - Product and domain language must use Change Set, Risk Signal, Evidence Check, Evidence Result, Policy, Verdict, Receipt and Receipt Digest as defined in `CONTEXT.md`.
-

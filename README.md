@@ -4,7 +4,7 @@
 
 **Make every code change show its receipts.**
 
-Deterministic risk signals, executable evidence gates, and tamper-evident
+Deterministic risk signals, executable evidence gates, and content-addressed
 receipts for human- and AI-authored code changes.
 
 [Quick start](#quick-start) · [How it works](#how-it-works) · [Policy](#policy) · [Security](#security-model) · [中文](./README.zh-CN.md)
@@ -19,7 +19,7 @@ answer harder questions:
 - What exactly changed, including uncommitted and untracked files?
 - Which parts of the change deserve extra scrutiny?
 - Which checks actually ran, and which claims have no evidence?
-- Is the report I am reading the same one CI produced?
+- Is the Receipt I am reading the same one CI produced?
 
 AI reviewers generate more opinions. DiffLedger builds a deterministic evidence
 gate underneath them. It works locally, without an account, API key, model, or
@@ -46,6 +46,8 @@ node dist/cli.js init
 # Review .diffledger.json before running its commands.
 node dist/cli.js check --base HEAD --markdown diffledger.receipt.md
 node dist/cli.js verify diffledger.receipt.json
+# Stronger: compare with a digest copied from a trusted CI channel.
+node dist/cli.js verify diffledger.receipt.json --digest <trusted-sha256>
 ```
 
 During local development, `--base HEAD` includes staged, unstaged, and untracked
@@ -57,6 +59,10 @@ diffledger check --base origin/main --head HEAD
 
 The package is ready for `npm install -g diffledger` after its first registry
 release; until then the repository-local command above is the supported path.
+
+Run the self-contained feature + workflow Change Set demo with `npm run demo`.
+It creates a temporary Git repository, produces a real Receipt, verifies it
+against an independently supplied digest, and removes the fixture afterward.
 
 ## How it works
 
@@ -128,16 +134,19 @@ A Receipt binds together:
 - canonical SHA-256 Receipt Digest.
 
 `diffledger verify` recalculates the digest without executing repository code.
-Changing even the Verdict from PASS to FAIL invalidates the Receipt.
+Changing even the Verdict from PASS to FAIL invalidates the stored digest. For
+protection against someone changing the Receipt *and* recomputing that digest,
+pass `--digest` with a value obtained from an independent trusted channel such
+as a protected CI check.
 
 ## CLI
 
 ```text
 diffledger init [--force]
-diffledger check [--base <ref>] [--head <ref>] [--config <path>]
+diffledger check [--base <ref>] [--head <ref>] [--policy <path>]
                  [--output <path>] [--markdown <path>]
                  [--format console|json|markdown] [--no-run]
-diffledger verify [receipt.json]
+diffledger verify [receipt.json] [--digest <trusted-sha256>]
 ```
 
 Exit codes:
@@ -165,8 +174,9 @@ Exit codes:
 - Evidence Checks run with the current user's permissions.
 - Commands use direct process execution with `shell: false`.
 - Stdout and stderr are bounded by Policy.
-- Receipt integrity detects modification; it is **not** a signature, identity
-  guarantee, sandbox, or remote attestation.
+- Receipt integrity detects corruption or modification without digest
+  recomputation. A separately trusted `--digest` detects substitution. Neither
+  mode is a signature, identity guarantee, sandbox, or remote attestation.
 - The MVP trusts the checked-out Policy. Loading Policy from a protected base
   revision and Docker isolation are planned before untrusted public-PR use.
 
@@ -181,13 +191,15 @@ See [SECURITY.md](./SECURITY.md) for the threat model and disclosure process.
 - Product decisions and validation are recorded in [the PRD](./docs/PRD.md),
   [market research](./docs/research/market-research.md), and
   [the PRD review](./docs/reviews/prd-review.md).
+- A reproducible 200-file CLI benchmark is available through `npm run benchmark`;
+  the recorded baseline lives in [docs/benchmarks](./docs/benchmarks/2026-08-30.md).
 
 ## Roadmap
 
 - v0.1: local CLI, risk signals, Evidence Checks, Receipt, offline verify
 - v0.2: protected-base Policy loading, Docker runner, GitHub Check summary
 - v0.3: in-toto predicate export, signatures, SARIF/coverage evidence adapters
-- v0.4: local Web report and cross-PR evidence history
+- v0.4: local Receipt explorer and cross-PR evidence history
 
 Contributions are welcome. Start with [CONTRIBUTING.md](./CONTRIBUTING.md).
 

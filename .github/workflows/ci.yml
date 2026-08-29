@@ -27,7 +27,7 @@ jobs:
       - run: npm run check
 
   dogfood:
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.event.before != '0000000000000000000000000000000000000000'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -40,7 +40,7 @@ jobs:
       - run: npm ci
       - run: npm run build
       - name: Verify change evidence
-        run: node dist/cli.js check --base "${{ github.event.pull_request.base.sha }}" --markdown diffledger.receipt.md
+        run: node dist/cli.js check --base "${{ github.event.before }}" --head "${{ github.event.after }}" --markdown diffledger.receipt.md
       - uses: actions/upload-artifact@v4
         if: always()
         with:

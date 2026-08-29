@@ -28,6 +28,9 @@ export function assessRisk(changeSet: ChangeSet): RiskAssessment {
   if (dependency.length) signals.push(signal("dependency_change", 15, "Dependency or lock files changed.", dependency));
   if (source.length && !tests.length) signals.push(signal("source_without_tests", 20, "Source changed without a corresponding test-file change.", source));
   if (deleted.length) signals.push(signal("file_deletion", 10, "Files were deleted and may remove behavior or safeguards.", deleted));
+  if (changeSet.summary.deletions > 500 && changeSet.summary.deletions > changeSet.summary.additions * 2) {
+    signals.push(signal("deletion_heavy_change", 20, `The Change Set removes ${changeSet.summary.deletions} lines while adding ${changeSet.summary.additions}.`, changeSet.files.filter((file) => file.deletions > file.additions).map((file) => file.path)));
+  }
   if (churn > 1_500) signals.push(signal("very_large_change", 30, `The Change Set contains ${churn} changed lines.`, changeSet.files.map((file) => file.path)));
   else if (churn > 500) signals.push(signal("large_change", 15, `The Change Set contains ${churn} changed lines.`, changeSet.files.map((file) => file.path)));
 

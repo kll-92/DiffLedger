@@ -20,7 +20,7 @@ export interface ChangedFile {
 }
 
 export interface ChangeSet {
-  base: { ref: string; sha: string };
+  base: { ref: string; sha: string; requestedRef?: string };
   target: { ref: string; digest: string };
   files: ChangedFile[];
   summary: {

@@ -68,7 +68,9 @@ function countLines(filePath: string): number {
   const content = readFileSync(filePath);
   if (content.includes(0)) return 0;
   const text = content.toString("utf8");
-  return text.length === 0 ? 0 : text.split("\n").length;
+  if (text.length === 0) return 0;
+  const lines = text.split("\n").length;
+  return text.endsWith("\n") ? lines - 1 : lines;
 }
 
 function worktreeDigest(root: string, files: ChangedFile[]): string {
@@ -118,10 +120,13 @@ export function inspectChangeSet(cwd: string, baseRef: string, headRef?: string)
 
   files.sort((left, right) => left.path.localeCompare(right.path));
   const categories = [...new Set(files.flatMap((file) => file.categories))].sort();
+  const base = committedTarget
+    ? { ref: diffBase, sha: diffBase, requestedRef: baseRef }
+    : { ref: baseRef, sha: diffBase };
   return {
     root,
     changeSet: {
-      base: { ref: baseRef, sha: baseSha },
+      base,
       target: {
         ref: headRef ?? "WORKTREE",
         digest: targetSha ?? worktreeDigest(root, files)

@@ -21,6 +21,8 @@ node dist/cli.js init
 # 执行前先审查 .diffledger.json，因为其中的检查会使用当前用户权限运行。
 node dist/cli.js check --base HEAD --markdown diffledger.receipt.md
 node dist/cli.js verify diffledger.receipt.json
+# 更强的校验：与从可信 CI 渠道单独取得的摘要比较
+node dist/cli.js verify diffledger.receipt.json --digest <trusted-sha256>
 ```
 
 输出示例：
@@ -41,10 +43,15 @@ Receipt     sha256:4b7ac0eac738d60e...
 - 按变更类别选择项目已有的测试、类型检查或安全扫描
 - 不经 shell 拼接命令，并限制写入 Receipt 的日志长度
 - 输出 JSON、Markdown 和可用于 CI 的退出码
-- 通过规范 JSON 和 SHA-256 发现 Receipt 被修改
+- 通过规范 JSON 和 SHA-256 检查 Receipt 完整性，并可与独立可信摘要比较
 
-Receipt Digest 只证明内容自生成后没有改变，不证明执行者身份，也不等同于
-数字签名、沙箱或远程证明。完整设计、竞品调研和范围取舍见
+Receipt 内置摘要可以发现未重算摘要的内容修改；若攻击者能同时修改内容并重算
+摘要，则必须使用来自独立可信渠道的 `--digest` 才能发现替换。它不证明执行者
+身份，也不等同于数字签名、沙箱或远程证明。完整设计、竞品调研和范围取舍见
 [PRD](./docs/PRD.md) 与[市场调研](./docs/research/market-research.md)。
 
 详细配置、架构、安全模型和路线图请阅读[英文 README](./README.md)。
+
+运行 `npm run demo` 可以创建一个临时 Git 仓库，完成一次包含功能代码、测试和
+GitHub Workflow 的真实检查，并通过独立摘要验证 Receipt；`npm run benchmark`
+可重复运行 200 文件基准测试。

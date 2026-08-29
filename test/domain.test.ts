@@ -12,6 +12,7 @@ test("classifies high-signal repository paths", () => {
   assert.deepEqual(classifyPath("SECURITY.md"), ["documentation"]);
   assert.deepEqual(classifyPath("package-lock.json"), ["configuration", "dependency"]);
   assert.deepEqual(classifyPath("src/user.test.ts"), ["test"]);
+  assert.deepEqual(classifyPath("scripts/demo.mjs"), ["source"]);
 });
 
 test("caps cumulative risk at 100 with stable reason codes", () => {
@@ -45,4 +46,20 @@ test("caps cumulative risk at 100 with stable reason codes", () => {
 test("canonical digest is independent of object key insertion order", () => {
   assert.equal(canonicalJson({ z: 1, a: { y: 2, x: 3 } }), '{"a":{"x":3,"y":2},"z":1}');
   assert.equal(sha256({ a: 1, b: 2 }), sha256({ b: 2, a: 1 }));
+});
+
+test("identifies deletion-heavy changes even when no file is deleted", () => {
+  const changeSet: ChangeSet = {
+    base: { ref: "main", sha: "a".repeat(40) },
+    target: { ref: "WORKTREE", digest: "b".repeat(64) },
+    files: [
+      { path: "src/legacy.ts", status: "modified", additions: 10, deletions: 700, categories: ["source"] },
+      { path: "test/legacy.test.ts", status: "modified", additions: 10, deletions: 5, categories: ["test"] }
+    ],
+    summary: { files: 2, additions: 20, deletions: 705, categories: ["source", "test"] }
+  };
+
+  const risk = assessRisk(changeSet);
+
+  assert.ok(risk.signals.some((item) => item.code === "deletion_heavy_change"));
 });

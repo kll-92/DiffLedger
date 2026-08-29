@@ -1,0 +1,12 @@
+$ npm run demo
+
+$ diffledger check --base HEAD
+DiffLedger PASS
+Change Set  4 files, +25/-2
+Risk        30/100 (medium)
+Evidence    1/1 passed
+Receipt     sha256:a17ca224c58d57ec...
+
+$ diffledger verify diffledger.receipt.json --digest <trusted>
+VALID sha256:a17ca224c58d57ec86c837ab642aa0c0cacc873eb49f8dfad7ebe14762345c4f
+

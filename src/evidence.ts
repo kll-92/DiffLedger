@@ -1,11 +1,12 @@
-import { runProcess } from "./process.js";
+import { runProcess, type ProcessResult } from "./process.js";
 import type { ChangeCategory, EvidenceResult, Policy } from "./types.js";
 
 export async function collectEvidence(
   policy: Policy,
   categories: ChangeCategory[],
   cwd: string,
-  runChecks: boolean
+  runChecks: boolean,
+  processAdapter: (executable: string, args: string[], options: { cwd: string; timeoutMs: number; maxOutputBytes: number }) => Promise<ProcessResult> = runProcess
 ): Promise<EvidenceResult[]> {
   const selected = policy.checks.filter((check) => check.when.includes("always") || check.when.some((category) => categories.includes(category as ChangeCategory)));
   const results: EvidenceResult[] = [];
@@ -24,7 +25,7 @@ export async function collectEvidence(
       });
       continue;
     }
-    const processResult = await runProcess(check.command, check.args, {
+    const processResult = await processAdapter(check.command, check.args, {
       cwd,
       timeoutMs: check.timeoutMs,
       maxOutputBytes: policy.maxOutputBytes

@@ -3,7 +3,7 @@ import type { ChangeCategory } from "./types.js";
 
 const SOURCE_EXTENSIONS = new Set([
   ".c", ".cc", ".cpp", ".cs", ".go", ".java", ".js", ".jsx", ".kt",
-  ".php", ".py", ".rb", ".rs", ".swift", ".ts", ".tsx", ".vue"
+  ".cjs", ".cts", ".mjs", ".mts", ".php", ".py", ".rb", ".rs", ".swift", ".ts", ".tsx", ".vue"
 ]);
 const DEPENDENCY_FILES = new Set([
   "bun.lock", "bun.lockb", "cargo.lock", "cargo.toml", "composer.json",

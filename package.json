@@ -1,7 +1,7 @@
 {
   "name": "diffledger",
   "version": "0.1.0",
-  "description": "Evidence gates and tamper-evident receipts for code changes",
+  "description": "Evidence gates and content-addressed receipts for code changes",
   "type": "module",
   "bin": {
     "diffledger": "dist/cli.js"
@@ -15,11 +15,14 @@
     "node": ">=20"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "clean": "node scripts/clean.mjs",
+    "build": "node scripts/clean.mjs dist && tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.test.json --noEmit",
-    "test:compile": "tsc -p tsconfig.test.json",
+    "test:compile": "node scripts/clean.mjs .test-dist && tsc -p tsconfig.test.json",
     "test": "npm run build && npm run test:compile && node --test .test-dist/test/*.test.js",
-    "check": "npm run typecheck && npm test"
+    "check": "npm run typecheck && npm test",
+    "demo": "npm run build && node scripts/demo.mjs",
+    "benchmark": "npm run build && node scripts/benchmark.mjs"
   },
   "keywords": [
     "git",
