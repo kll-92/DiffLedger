@@ -19,7 +19,7 @@
     "build": "node scripts/clean.mjs dist && tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.test.json --noEmit",
     "test:compile": "node scripts/clean.mjs .test-dist && tsc -p tsconfig.test.json",
-    "test": "npm run build && npm run test:compile && node --test .test-dist/test/*.test.js",
+    "test": "npm run build && npm run test:compile && node scripts/run-tests.mjs",
     "check": "npm run typecheck && npm test",
     "demo": "npm run build && node scripts/demo.mjs",
     "benchmark": "npm run build && node scripts/benchmark.mjs"
